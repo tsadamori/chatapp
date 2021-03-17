@@ -36,6 +36,16 @@ class MessageController extends Controller
         echo json_encode($messages);
     }
 
+    public function postMessage(Request $request)
+    {
+        $message = new Message;
+        $message->message = $request->message;
+        $message->user_id = Auth::id();
+        $message->save();
+
+        echo json_encode(true);
+    }
+
     public function getNickname()
     {
         $user = User::where('id', Auth::id())->first();
