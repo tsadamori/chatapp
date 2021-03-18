@@ -1,10 +1,11 @@
 require('./bootstrap');
 
+// import Vue
 import Vue from 'vue/dist/vue.esm';
-import 'bootstrap/dist/css/bootstrap.css'; // add
-import 'bootstrap-vue/dist/bootstrap-vue.css'; // add
-Vue.config.productionTip = false;
-
+// import Bootstrap
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+// import Vue Matrial
 import VueMaterial from 'vue-material';
 import 'vue-material/dist/vue-material.css'
 Vue.use(VueMaterial);
@@ -14,18 +15,17 @@ const app = new Vue({
     data: {
         messages: [],
     },
+    // DOMが作成された直後に実行される
     mounted() {
-        // DBのメッセージを表示
         var self = this;
         var url = 'ajax/getMessages';
+        // DBのメッセージを表示
         axios.get(url).then((res) => {
+            console.log(res.data);
             res.data.forEach((val, index) => {
-                var created_at = format_date(new Date(val.created_at));
+                var created_at = formatDate(new Date(val.created_at));
                 self.messages.push({
                     body: val.message,
-                    // 自分の投稿かどうか判定
-                    me: val.me,
-                    // me: false,
                     nickname: val.nickname,
                     created_at: created_at,
                 });
@@ -33,25 +33,27 @@ const app = new Vue({
         });
     },
     methods: {
+        // メッセージ投稿ボタンがクリックされたら
+        // DBにメッセージを保存し、タイムラインに表示するmethod
         addItem: function(e) {
             var message = document.getElementById('message').value;
             if (message != '') {
                 // DBにメッセージを保存
-                var url1 = 'ajax/postMessage';
+                var urlPost = 'ajax/postMessage';
                 var data = {
                     message: message,
                 }
-                axios.post(url1, data).then(() => {
+                axios.post(urlPost, data).then(() => {
                     console.log('メッセージを登録しました');
                 });
     
-                var url2 = 'ajax/getNickname';
-                axios.get(url2).then((res) => {
-                    var now = format_date(new Date());
+                // ニックネーム取得
+                var urlGet = 'ajax/getNickname';
+                axios.get(urlGet).then((res) => {
+                    var now = formatDate(new Date());
                     // messagesにデータを格納
                     this.messages.unshift({
                         body: message,
-                        me: true,
                         nickname: res.data.nickname,
                         created_at: now,
                     });
@@ -62,7 +64,11 @@ const app = new Vue({
     }
 });
 
-function format_date(date)
+/**
+ * 日付をフォーマットする関数
+ * @param {datetime} date メッセージの投稿日付
+ */
+function formatDate(date)
 {
     // MM月DD日　hh:mm分にフォーマット
     var formatted_date = 
@@ -74,6 +80,10 @@ function format_date(date)
     return formatted_date;
 }
 
+/**
+ * メッセージの投稿日付を2桁表示にする関数
+ * @param {number} num メッセージの投稿月,日,時,分
+ */
 function toDoubleDigits(num)
 {
     num += '';
