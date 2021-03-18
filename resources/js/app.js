@@ -1,5 +1,14 @@
 require('./bootstrap');
 
+import Vue from 'vue/dist/vue.esm';
+import 'bootstrap/dist/css/bootstrap.css'; // add
+import 'bootstrap-vue/dist/bootstrap-vue.css'; // add
+Vue.config.productionTip = false;
+
+import VueMaterial from 'vue-material';
+import 'vue-material/dist/vue-material.css'
+Vue.use(VueMaterial);
+
 const app = new Vue({
     el: '#app',
     data: {
